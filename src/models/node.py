@@ -1,9 +1,10 @@
+
 # clase que permite instanciar nuevos nodos con sus atributos
 class Node:
 
   # constructor para el nodo con hijos, padre y valor
-  def __init__(self, value):
-    self.value = value
+  def __init__(self, flight):
+    self.value = flight
     self.parent = None
     self.leftChild = None
     self.rightChild = None
@@ -20,7 +21,7 @@ class Node:
   def setLeftChild(self, node):
     self.leftChild = node
 
-  # obtener el hijo izquiero
+  # obtener el hijo izquierdo
   def getLeftChild(self):
     return self.leftChild
 
