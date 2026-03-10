@@ -3,11 +3,16 @@
 class Node:
 
   # constructor para el nodo con hijos, padre y valor
+  # We define the attributes (balaceFactor, finalPrice and height as specific attributes of the node)
+  
   def __init__(self, flight):
     self.value = flight
     self.parent = None
     self.leftChild = None
     self.rightChild = None
+    self.balanceFactor = None
+    self.height = None
+    self.finalPrice = None
 
   # asignación de un hijo derecho
   def setRightChild(self, node):
@@ -37,3 +42,23 @@ class Node:
   def getValue(self):
     return self.value
   
+  def setBalanceFactor(self, balanceFactor):
+    self.balanceFactor = balanceFactor
+    
+  def getBalanceFactor(self):
+    return self.balanceFactor
+  
+  def setHeight(self, height):
+    self.height = height
+    
+  def getHeight(self):
+    return self.height
+  
+  def setFinalPrice(self, finalPrice):
+    self.finalPrice = finalPrice
+    
+  def getFinalPrice(self):
+    return self.finalPrice
+  
+  3
+    

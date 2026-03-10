@@ -15,18 +15,14 @@ def buildByInsertion(bst, data):
             flight_data["destino"],
             flight_data["horaSalida"],
             flight_data["precioBase"],
-            #flight_data["precioFinal"],
             flight_data["pasajeros"],
             flight_data["promocion"],
-            flight_data["alerta"],
-            #flight_data["altura"],
-            #flight_data["factorEquilibrio"]
+            flight_data["alerta"]
         )
 
         node = Node(flight)
         bst.insert(node)
       
-
 
 # When it comes to Topology we have to keep the structure described in JSON File, it means that we already have the descendants
 def buildByTopology(data):
@@ -40,16 +36,17 @@ def buildByTopology(data):
         data["destino"],
         data["horaSalida"],
         data["precioBase"],
-        data["precioFinal"],
         data["pasajeros"],
         data["promocion"],
-        data["alerta"],
-        data["altura"],
-        data["factorEquilibrio"]
+        data["alerta"]
     )
 
+# We just create the node with the flight and then we assign the balance factor, height and final price, then we call recursively for the left and right child until we reach a leaf (a node without descendants)
     node = Node(flight)
-
+    node.setBalanceFactor(data.get("balanceFactor"))
+    node.setHeight(data.get("altura"))
+    node.setFinalPrice(data.get("precioFinal"))
+    
     node.setLeftChild(buildByTopology(data["izquierdo"]))
     node.setRightChild(buildByTopology(data["derecho"]))
 
