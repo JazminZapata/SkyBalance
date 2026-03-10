@@ -11,5 +11,8 @@ class Flight:
         self.promocion = promocion
         self.alerta = alerta
         
+    def __str__(self):
+      return f"{self.codigo}"
+        
     
     

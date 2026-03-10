@@ -207,23 +207,28 @@ class Tree:
 
 # Cantidad de aristas que hay desde la raíz hasta la hoja más lejana  (Altura del árbol)
   def heightTree(self):
-
-    # Llamamos al recorrido por anchura que nos devolverá una hoja en el último nivel
+    # Obtenemos los nodos para buscar el último
     result = self.copyBreadthFirstSearch()
+    
+    if not result:
+        return 0
 
-    # Guardamos ese nodo
+    # Guardamos el último nodo visitado por BFS (el más profundo o lejano)
     lastNode = result[len(result) - 1]
+    
+    # Creamos la lista y agregamos el primer nodo
     parents = []
-    parents[0] = lastNode
-    n = 0
+    parents.append(lastNode) 
 
-    # Mientras los nodos por encima de la última hoja tengan padre se llenará una lista con ellos (padres)
-    while parents[n].getParent() is not None:
-      parents[n+1] = parents[n].getParent()
-      n = n + 1
+    # Mientras el nodo actual tenga padre, lo agregamos a la lista
+    # Usamos un puntero simple en lugar de un índice 'n'
+    currentNode = lastNode
+    while currentNode.getParent() is not None:
+        currentNode = currentNode.getParent()
+        parents.append(currentNode)
 
-    # La cantidad de padres encima de la hoja determinará el número de aristas que hay hasta llegar a el desde la raíz
-    return len(parents)
+    # La altura suele ser el número de aristas (nodos en el camino - 1)
+    return len(parents) - 1
 
   # Método que permite calcular la altura de un nodo
   def getHeightNode(self, node):
