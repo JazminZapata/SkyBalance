@@ -1,5 +1,5 @@
 from flask import json
-from node import Node
+from sqlalchemy import null
 
 class Tree:
   
@@ -31,7 +31,7 @@ class Tree:
   def __search(self, currentRoot, value):
     # validar si el valor buscado es igual a la raiz actual
     # print(f"El valor del nodo es: {currentRoot.getValue()}")
-    # print(f"Comparación: {currentRoot.getValue() == value}" )
+    # print(f"Comparación: {currentRoot.getValue().codigo_comp == value}" )
     if currentRoot.getValue().codigo_comp == value:
       # si es así se retorna la actual raiz
       return currentRoot
@@ -393,6 +393,8 @@ class Tree:
 
         "altura": self.getHeightNode(node),
         "factorEquilibrio": self.getBalanceFactor(node),
+        "prioridad": flight.getPriority(),
+        "rentabilidad": self.getRentabilidad(node), #Importante para el punto de Eliminacion Inteligente por Impacto Economiico
 
         "izquierdo": self.toJSON(node.getLeftChild()),
         "derecho": self.toJSON(node.getRightChild())
@@ -406,3 +408,24 @@ class Tree:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
     print("Árbol exportado correctamente")
+    
+  def isCritical(self, node, limite):
+    profundidad = self.getDepth(node)
+    return profundidad > limite
+  
+  def getDepth(self, node):
+    profundidad = 0
+    actual = node
+
+    while actual.getParent() is not None:
+        profundidad += 1
+        actual = actual.getParent()
+
+    return profundidad
+  
+  def getRentabilidad(self, node):
+    #Falta implementaciòn, se debe calcular a partir del precio final y el número de pasajeros para determinar la rentabilidad del vuelo, lo cual es importante para el punto de Eliminación Inteligente por Impacto Económico
+    return None
+  
+  
+  # “El método isCritical recibe un nodo como parámetro porque la condición de criticidad depende de su profundidad dentro del árbol.”

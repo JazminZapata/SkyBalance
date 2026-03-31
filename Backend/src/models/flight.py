@@ -25,6 +25,15 @@ class Flight:
         if numeros:
             return int(numeros)
 
-        return texto  # por si no tiene números       
+        return texto  # por si no tiene números      
+    
+    # Definir get priority para calcular la prioridad del vuelo
+    # "“Se incluyó la prioridad como un atributo adicional en la serialización del árbol para soportar decisiones operativas sin afectar la estructura AVL.”"
+    def getPriority(self):
+      return None
+  
+    def getIngresoBase(self, precioFinal):
+      return self.pasajeros * precioFinal
+  
     
     
