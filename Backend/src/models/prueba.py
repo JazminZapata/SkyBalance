@@ -1,6 +1,6 @@
-from node import Node
-from bst import BST
-from loader import loadTree
+from .node import Node
+from .bst import BST
+from .loader import loadTree
 
 # Create an instance of the BST
 tree = BST()
@@ -10,21 +10,21 @@ print("--- SISTEMA DE CARGA DE VUELOS ---")
 tipo = int(input("Ingresa un número (1- Insercion, 2- Topología): "))
 
 if tipo == 1:
-    ruta = "Backend/json/ModoInserción.json" 
+    ruta = "Backend/json/ModoInserción.json"
 elif tipo == 2:
-    ruta = "Backend/json/ModoTopología.json" 
+    ruta = "Backend/json/ModoTopología.json"
 else:
     print("Opción no válida")
     exit()
 
 # LOADING THE TREE
-# loadTree calls to buildByInsertion or buildByTopology 
+# loadTree calls to buildByInsertion or buildByTopology
 
 loadTree(tree, ruta)
 
-print("\n" + "="*30)
+print("\n" + "=" * 30)
 print("ÁRBOL CARGADO EXITOSAMENTE")
-print("="*30)
+print("=" * 30)
 
 #
 # We use the method print_tree from Tree class to show it.

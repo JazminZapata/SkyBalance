@@ -1,64 +1,60 @@
-
 # clase que permite instanciar nuevos nodos con sus atributos
 class Node:
 
-  # constructor para el nodo con hijos, padre y valor
-  # We define the attributes (balaceFactor, finalPrice and height as specific attributes of the node)
-  
-  def __init__(self, flight):
-    self.value = flight
-    self.parent = None
-    self.leftChild = None
-    self.rightChild = None
-    self.balanceFactor = None
-    self.height = None
-    self.finalPrice = None
+    # constructor para el nodo con hijos, padre y valor
+    # We define the attributes (balaceFactor, finalPrice and height as specific attributes of the node)
 
-  # asignación de un hijo derecho
-  def setRightChild(self, node):
-    self.rightChild = node
+    def __init__(self, flight):
+        self.value = flight
+        self.parent = None
+        self.leftChild = None
+        self.rightChild = None
+        self.balanceFactor = None
+        self.height = None
+        self.finalPrice = None
 
-  # obtener el hijo derecho
-  def getRightChild(self):
-    return self.rightChild
+    # asignación de un hijo derecho
+    def setRightChild(self, node):
+        self.rightChild = node
 
-  # asignar un hijo izquierdo
-  def setLeftChild(self, node):
-    self.leftChild = node
+    # obtener el hijo derecho
+    def getRightChild(self):
+        return self.rightChild
 
-  # obtener el hijo izquierdo
-  def getLeftChild(self):
-    return self.leftChild
+    # asignar un hijo izquierdo
+    def setLeftChild(self, node):
+        self.leftChild = node
 
-  # asignar un padre
-  def setParent(self, node):
-    self.parent = node
+    # obtener el hijo izquierdo
+    def getLeftChild(self):
+        return self.leftChild
 
-  # obtener el nodo padre
-  def getParent(self):
-    return self.parent
+    # asignar un padre
+    def setParent(self, node):
+        self.parent = node
 
-  # obtener el valor del nodo
-  def getValue(self):
-    return self.value
-  
-  def setBalanceFactor(self, balanceFactor):
-    self.balanceFactor = balanceFactor
-    
-  def getBalanceFactor(self):
-    return self.balanceFactor
-  
-  def setHeight(self, height):
-    self.height = height
-    
-  def getHeight(self):
-    return self.height
-  
-  def setFinalPrice(self, finalPrice):
-    self.finalPrice = finalPrice
-    
-  def getFinalPrice(self):
-    return self.finalPrice
-  
-  3
-    
+    # obtener el nodo padre
+    def getParent(self):
+        return self.parent
+
+    # obtener el valor del nodo
+    def getValue(self):
+        return self.value
+
+    def setBalanceFactor(self, balanceFactor):
+        self.balanceFactor = balanceFactor
+
+    def getBalanceFactor(self):
+        return self.balanceFactor
+
+    def setHeight(self, height):
+        self.height = height
+
+    def getHeight(self):
+        return self.height
+
+    def setFinalPrice(self, finalPrice):
+        self.finalPrice = finalPrice
+
+    def getFinalPrice(self):
+        return self.finalPrice
