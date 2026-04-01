@@ -17,11 +17,11 @@ class AVL(Tree):
 
     # Método recursivo para insertar un nodo cuando se tiene raiz en el árbol
     def __insert(self, currentRoot, node):
-      if node.getValue() == currentRoot.getValue():
-        print(f"El valor del nodo {node.getValue()} ya existe en el árbol.")
+      if node.getValue().codigo_comp == currentRoot.getValue().codigo_comp:
+        print(f"El valor del nodo {node.getValue().codigo} ya existe en el árbol.")
       else:
         # se verifica si el valor a insertar es mayor que el actual raiz
-        if node.getValue() > currentRoot.getValue():
+        if node.getValue().codigo_comp > currentRoot.getValue().codigo_comp:
           # se verifica si existe un hijo derecho
           if currentRoot.getRightChild() is None:
             # si no tiene hijo derecho, se asigna el nodo como hijo derecho
@@ -29,7 +29,7 @@ class AVL(Tree):
             # y el nuevo nodo tendrá como padre a la actual raiz
             node.setParent(currentRoot)
             # verificar desbalanceo
-            self.checkBalance(currentRoot)
+            self.checkBalance(currentRoot) #Aqui sucederia el balanceo automatico
           else:
             # ya tiene hijo derecho, entonces se debe procesar la inserción desde el hijo derecho
             # haciendo el llamado recursivo con ese hijo
@@ -71,10 +71,14 @@ class AVL(Tree):
           case "RR":
             self.__rotateLeft(node)
 
-          # FALTA IMPLEMENTAR LOS CASOS LR Y RL
+          case "LR":
+            self.__rotateRight(node.getLeftChild())
+            self.__rotateLeft(node)
+            
+          case "RL":
+            self.__rotateLeft(node.getRightChild())
+            self.__rotateRight(node)
 
-
-      # Método para balancear un caso de desbalanceo LL
       else:
         # se verifica que el nodo actual no sea la raiz, y se invoca el chequeo de balanceo con su padre.
         # cuando es la raiz se finaliza la evaluación
@@ -114,10 +118,13 @@ class AVL(Tree):
       topNode.setLeftChild(rightChildOfMiddleNode)
       if rightChildOfMiddleNode is not None:
         rightChildOfMiddleNode.setParent(topNode)
+      
+      # After rotation, depths change: recalculate critical flags and prices
+      self.recalculatePrices()
 
 
       # método para el giro simple a la izquierda
-      def __rotateLeft(self, topNode):
+    def __rotateLeft(self, topNode):
         # se obtiene el nodo de la mitad
         middleNode = topNode.getRightChild()
 
@@ -148,10 +155,13 @@ class AVL(Tree):
         topNode.setRightChild(leftChildOfMiddleNode)
         if leftChildOfMiddleNode is not None:
           leftChildOfMiddleNode.setParent(topNode)
+        
+        # After rotation, depths change: recalculate critical flags and prices
+        self.recalculatePrices()
 
 
       # método para identificar el caso de desbalanceo
-      def getBalanceCase(self, node, bf):
+    def getBalanceCase(self, node, bf):
         bfCase = ""
         # caso negativo, va por R
         if bf < -1:
@@ -175,7 +185,7 @@ class AVL(Tree):
 
 
       # Método para calcular el BF de un nodo
-      def getBalanceFactor(self, node):
+    def getBalanceFactor(self, node):
         if node is None:
           return 0
         leftChildHeight = self.getHeightNode(node.getLeftChild())
@@ -184,3 +194,39 @@ class AVL(Tree):
 
       # -----------------------------------------------------------
       # FIN DE MÉTODOS DEL BALANCEO DEL ÁRBOL AVL
+      
+      
+    # deleteMinRentabilidad sí o sí debe estar en AVL porque es quien sabe rebalancear.  
+      
+    # Necessary to recalculate prices in case the critical node, after removal
+    def delete(self, value):
+      # Call parent delete logic
+      super().delete(value)
+      # After deletion, depths may change — recalculate critical flags and prices
+      self.recalculatePrices()
+
+    def deleteMinRentabilidad(self):
+    # Find the node with the lowest profitability
+      node = self.findMinRentabilidadNode()
+
+      if node is None:
+        print("No hay nodos para eliminar")
+        return
+
+      codigo = node.getValue().codigo_comp
+      print(f"Eliminando nodo: {node.getValue().codigo}")
+      print(f"Rentabilidad: {self.getRentabilidad(node)}")
+
+    # Save the parent BEFORE deleting, to rebalance from there upward
+      parentNode = node.getParent()
+
+    # Delete using the method 
+      self.delete(codigo)
+
+    # Rebalance upward from where the node was removed
+      if parentNode is not None:
+        self.checkBalance(parentNode)
+      elif self.root is not None:
+        # Deleted node was root, rebalance from new root
+        self.checkBalance(self.root)
+ 

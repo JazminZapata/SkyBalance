@@ -1,43 +1,131 @@
+from flight import Flight
 from node import Node
+from avl import AVL
 from bst import BST
 from loader import loadTree
 
-# Create an instance of the BST
-tree = BST()
+# Create trees
+avl = AVL()
+bst = BST()
 
-# Select the mode (we have to change this so the user can browse the file or select it from a list of options)
 print("--- SISTEMA DE CARGA DE VUELOS ---")
 tipo = int(input("Ingresa un número (1- Insercion, 2- Topología): "))
 
 if tipo == 1:
-    ruta = "Backend/json/ModoInserción.json" 
+    ruta = "Backend/json/ModoInserción.json"
 elif tipo == 2:
-    ruta = "Backend/json/ModoTopología.json" 
+    ruta = "Backend/json/ModoTopología.json"
 else:
     print("Opción no válida")
     exit()
 
-# LOADING THE TREE
-# loadTree calls to buildByInsertion or buildByTopology 
+# Item 6 — set critical depth limit before loading JSON
+limite_inicial = int(input("Ingresa la profundidad límite para nodos críticos: "))
+avl.setLimite(limite_inicial)
 
-loadTree(tree, ruta)
+# Load tree
+loadTree(avl, bst, ruta)
 
 print("\n" + "="*30)
-print("ÁRBOL CARGADO EXITOSAMENTE")
+print("ÁRBOLES CARGADOS EXITOSAMENTE")
 print("="*30)
 
-#
-# We use the method print_tree from Tree class to show it.
-tree.print_tree()
+modo = tipo
 
-print(f"\nTotal de vuelos (Peso): {tree.treeWeight()}")
-print(f"Altura del árbol: {tree.heightTree()}")
-print(f"Factor de balanceo del nodo raíz: {tree.root.getBalanceFactor()}")
+# INSERTION MODE
+if modo == 1:
+    print("\n--- AVL ---")
+    avl.print_tree()
+    print(f"Total de vuelos: {avl.treeWeight()}")
+    print(f"Altura: {avl.heightTree()}")
+    print(f"Balance raíz: {avl.getBalanceFactor(avl.root)}")
 
+    print("\n--- BST ---")
+    bst.print_tree()
+    print(f"Total de vuelos: {bst.treeWeight()}")
+    print(f"Altura: {bst.heightTree()}")
 
-print("--- CONSULTA DE NODOS  ---")
+# TOPOLOGY MODE
+elif modo == 2:
+    print("\n--- AVL ---")
+    avl.print_tree()
+    print(f"Total de vuelos: {avl.treeWeight()}")
+    print(f"Altura: {avl.heightTree()}")
+    print(f"Balance raíz: {avl.getBalanceFactor(avl.root)}")
 
-codigo = input("Ingresa el código del vuelo a consultar SU ALTURA: ")
-node1 = tree.search(codigo)
+    print("\n--- BST ---")
+    print("No aplica en modo topología")
 
-print(f"Consultar altura de un nodo específico: {tree.getHeightNode(node1)}")
+# Item 6 — show critical status after loading
+print("\n--- PENALIZACIÓN POR PROFUNDIDAD CRÍTICA ---")
+print(f"Límite actual: {avl.limite}")
+for n in avl.copyBreadthFirstSearch():
+    codigo = n.getValue().codigo
+    depth = avl.getDepth(n)
+    critical = n.getIsCritical()
+    base = n.getValue().precioBase
+    final = n.getFinalPrice()
+    print(f"{codigo} | profundidad: {depth} | crítico: {critical} | base: ${base} | final: ${final}")
+
+# Insert new node
+nuevo = Flight("SB1010", "Cali", "Bogotá", "10:00", 200, 50, False, False)
+node = Node(nuevo)
+avl.insert(node)
+
+print("\n--- AVL ACTUALIZADO ---")
+avl.print_tree()
+print(f"Balance raíz: {avl.getBalanceFactor(avl.root)}")
+
+# Item 6 — show critical status after insertion (depths may have changed due to rotations)
+print("\n--- PENALIZACIÓN TRAS INSERCIÓN ---")
+print(f"Límite actual: {avl.limite}")
+for n in avl.copyBreadthFirstSearch():
+    codigo = n.getValue().codigo
+    depth = avl.getDepth(n)
+    critical = n.getIsCritical()
+    base = n.getValue().precioBase
+    final = n.getFinalPrice()
+    print(f"{codigo} | profundidad: {depth} | crítico: {critical} | base: ${base} | final: ${final}")
+
+# Show profitability
+print("\n--- RENTABILIDAD DE NODOS ---")
+for n in avl.copyBreadthFirstSearch():
+    print(n.getValue().codigo, "→", avl.getRentabilidad(n))
+
+# Delete least profitable node
+print("\n--- ELIMINANDO NODO DE MENOR RENTABILIDAD ---")
+avl.deleteMinRentabilidad()
+
+print("\n--- AVL DESPUÉS DE ELIMINACIÓN ---")
+avl.print_tree()
+
+# Item 6 — show critical status after deletion
+print("\n--- PENALIZACIÓN TRAS ELIMINACIÓN ---")
+print(f"Límite actual: {avl.limite}")
+for n in avl.copyBreadthFirstSearch():
+    codigo = n.getValue().codigo
+    depth = avl.getDepth(n)
+    critical = n.getIsCritical()
+    base = n.getValue().precioBase
+    final = n.getFinalPrice()
+    print(f"{codigo} | profundidad: {depth} | crítico: {critical} | base: ${base} | final: ${final}")
+
+# Item 6 — allow runtime limit update
+cambiar = input("\n¿Deseas cambiar el límite de profundidad? (s/n): ")
+if cambiar.lower() == "s":
+    nuevo_limite = int(input("Nuevo límite: "))
+    avl.setLimite(nuevo_limite)
+    print(f"\n--- PRECIOS RECALCULADOS CON LÍMITE {nuevo_limite} ---")
+    for n in avl.copyBreadthFirstSearch():
+        codigo = n.getValue().codigo
+        depth = avl.getDepth(n)
+        critical = n.getIsCritical()
+        base = n.getValue().precioBase
+        final = n.getFinalPrice()
+        print(f"{codigo} | profundidad: {depth} | crítico: {critical} | base: ${base} | final: ${final}")
+
+# Export tree
+opcion = input("\n¿Deseas exportar el árbol? (s/n): ")
+if opcion.lower() == "s":
+    nombre_archivo = input("Ingresa el nombre del archivo: ")
+    avl.exportTree(nombre_archivo + ".json")
