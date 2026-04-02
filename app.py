@@ -203,7 +203,7 @@ def animar_recorrido(nodes, container):
 
     for n in nodes:
 
-        # 🔥 cancelar
+        #  cancelar
         if st.session_state.stop_animacion:
             break
 
@@ -300,14 +300,14 @@ with col2:
     
     
 
-    # 🔵 AVL (arriba)
+    # AVL (arriba)
     tree_container = st.empty()
     with tree_container:
         draw_tree(avl)
 
     st.divider()
 
-    # 🔵 BST (abajo)
+    # BST (abajo)
     if not bst.root:
         st.info("BST vacío")
     else:
@@ -386,7 +386,7 @@ with col3:
 
         st.success("Found")
 
-        # 🔥 REDIBUJAR SIN REINICIAR
+        #  REDIBUJAR SIN REINICIAR
         with tree_container:
             draw_tree(avl)
 
