@@ -35,6 +35,7 @@ def build_graph(node, G=None, pos=None, x=0.0, y=0.0, layer=1):
     return G, pos
 
 def draw_tree(avl):
+    
     if not avl.root:
         st.info("Árbol vacío")
         return
@@ -65,7 +66,6 @@ def draw_tree(avl):
 
     st.pyplot(fig)
     plt.close(fig)
-
 
 if "avl" not in st.session_state:
     st.session_state.avl = AVL()
@@ -188,6 +188,9 @@ def count_leaves(node):
 height = avl.heightTree() if avl.root else 0
 leaves = count_leaves(avl.root)
 
+bst_height = bst.heightTree() if bst.root else 0
+bst_leaves = count_leaves(bst.root)
+
 def animar_recorrido(nodes, container):
     st.session_state.recorrido = []
     st.session_state.highlight = None
@@ -228,7 +231,7 @@ def animar_recorrido(nodes, container):
 
         time.sleep(0.4)
 
-    # 🔥 limpiar TODO al final o cancelación
+    # limpiar TODO al final o cancelación
     st.session_state.recorrido = []
     st.session_state.stop_animacion = False
     st.session_state.animando = False  # 👈 clave
@@ -294,23 +297,56 @@ with col1:
 # ===============================
 
 with col2:
+    
+    
+
+    # 🔵 AVL (arriba)
     tree_container = st.empty()
     with tree_container:
         draw_tree(avl)
+
+    st.divider()
+
+    # 🔵 BST (abajo)
+    if not bst.root:
+        st.info("BST vacío")
+    else:
+        G_bst, pos_bst = build_graph(bst.root)
+
+        fig_bst, ax_bst = plt.subplots(figsize=(8, 4))
+        nx.draw(
+            G_bst, pos_bst,
+            with_labels=True,
+            node_color="#94a3b8",
+            node_size=1200,
+            font_color="white",
+            edge_color="#cbd5f5"
+        )
+
+        st.markdown("### BST")
+        st.pyplot(fig_bst)
+        plt.close(fig_bst)
 
 # ===============================
 # RIGHT
 # ===============================
 
 with col3:
-    st.subheader("Metrics")
+    st.subheader("AVL Metrics")
 
-    # métricas compactas en una fila
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Height", height)
     m2.metric("Leaves", leaves)
     m3.metric("Rotations", "N/A")
     m4.metric("Cancel", st.session_state.mass_cancel)
+
+    st.divider()
+
+    st.subheader("BST Metrics")
+
+    b1, b2 = st.columns(2)
+    b1.metric("Height", bst_height)
+    b2.metric("Leaves", bst_leaves)
 
     st.divider()
 
