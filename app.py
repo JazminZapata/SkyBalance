@@ -48,11 +48,11 @@ def draw_tree(avl):
     node_colors = []
     for n in G.nodes():
         if recorrido and n in recorrido:
-            node_colors.append("#22c55e")  # 🟢 recorrido
+            node_colors.append("#22c55e") 
         elif highlight and n == highlight:
-            node_colors.append("#ef4444")  # 🔴 búsqueda
+            node_colors.append("#ef4444") 
         else:
-            node_colors.append("#679df3")  # 🔵 normal
+            node_colors.append("#679df3") 
 
     fig, ax = plt.subplots(figsize=(10, 5))
     nx.draw(
@@ -80,6 +80,7 @@ if "highlight" not in st.session_state:
     
 if "show_export" not in st.session_state:
     st.session_state.show_export = False
+    
 
 avl = st.session_state.avl
 bst = st.session_state.bst
@@ -235,6 +236,7 @@ def animar_recorrido(nodes, container):
     st.session_state.recorrido = []
     st.session_state.stop_animacion = False
     st.session_state.animando = False  # 👈 clave
+    
 
     with container:
         draw_tree(avl)
@@ -283,22 +285,39 @@ with col1:
     st.markdown("### Depth Control")
     depth = st.number_input("Max Depth", value=5)
     avl.limite = depth
+    
+    if st.session_state.get("last_deleted"):
+     d = st.session_state.last_deleted
+     st.success(f"Deleted Node: **{d['code']}** — Profitability: **${d['profitability']:,.2f}**")
 
     if st.button("Remove Low Profit Node"):
+      if avl.root is None:
+        st.warning("Tree is empty")
+      else:
         try:
-            avl.deleteMinProfit()
-            st.success("Node removed")
-            st.rerun()
-        except:
-            st.warning("Error")
+            node = avl.findMinProfit()
+            if node is None:
+                st.warning("There are no nodes to delete")
+            else:
+                code = node.getValue().codigo
+                profitability = avl.getProfit(node)
+                
+                avl.deleteMinProfit()
+                
+                # Guardar en session_state antes del rerun
+                st.session_state.last_deleted = {
+                    "code": code,
+                    "profitability": profitability
+                }
+                st.rerun()
+        except Exception as e:
+            st.error(f"Error: {e}")
 
 # ===============================
 # CENTER
 # ===============================
 
 with col2:
-    
-    
 
     # AVL (arriba)
     tree_container = st.empty()

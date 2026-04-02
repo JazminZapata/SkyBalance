@@ -199,10 +199,7 @@ class AVL(Tree):
             return 0
         leftChildHeight = self.getHeightNode(node.getLeftChild())
         rightChildHeight = self.getHeightNode(node.getRightChild())
-        return leftChildHeight - rightChildHeight
-      
-      
-    # deleteMinRentabilidad sí o sí debe estar en AVL porque es quien sabe rebalancear.  
+        return leftChildHeight - rightChildHeight  
       
     # Necessary to recalculate prices in case the critical node, after removal
     def delete(self, value):
@@ -214,28 +211,27 @@ class AVL(Tree):
     # Item 8.
 
     def deleteMinProfit(self):
-        # Find the node with the lowest profitability
-        node = self.findMinProfit()
+      node = self.findMinProfit()
 
-        if node is None:
-            print("No hay nodos para eliminar")
-            return
+      if node is None:
+        print("There are no nodes to delete ")
+        return
 
-        codigo = node.getValue().codigo_comp
-        print(f"Eliminando nodo: {node.getValue().codigo}")
-        print(f"Rentabilidad: {self.getProfit(node)}")
+      print(f"Deleted Node: {node.getValue().codigo}")
+      print(f"Profitability: {self.getProfit(node)}")
 
-        # Save the parent BEFORE deleting, to rebalance from there upward
-        parentNode = node.getParent()
+      parent = node.getParent()
 
-        # Delete using the BST logic inherited from Tree
-        self.delete(codigo)
+    # eliminar
+      self.delete(node.getValue().codigo_comp)
+ 
+      while parent is not None:
+        self.checkBalance(parent)
+        parent = parent.getParent()
 
-        # Rebalance upward from where the node was removed
-        if parentNode is not None:
-            self.checkBalance(parentNode)
-        elif self.root is not None:
-            # Deleted node was root, rebalance from new root
-            self.checkBalance(self.root)    
+      if self.root is not None:
+        self.checkBalance(self.root)
+
+      self.recalculatePrices()
     
     # End Item 8.
