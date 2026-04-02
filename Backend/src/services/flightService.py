@@ -3,6 +3,7 @@ from ..models.node import Node
 from ..models.flight import Flight
 from ..models.avl import AVL
 from ..models.actionHistory import ActionHistory
+from flask import json
 
 
 class FlightService:
@@ -12,13 +13,53 @@ class FlightService:
         self.bst = None
         self.history = ActionHistory()
         self.mass_cancellations = 0
+        self.load_type = None  # Para rastrear el tipo de carga (inserción o topología)
         
         
     #LOAD FROM JSON
     def load_from_json(self, filepath):
+        self.filepath = filepath
         self.history.save(self.tree)
+
+        import json
+        with open(filepath, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        self.load_type = data.get("tipo")
+
         loadTree(self.tree, self.bst, filepath)
-        print(f"JSON cargado correctamente desde {filepath}")
+    
+    #Save json    
+    def save_to_json(self):
+        if self.load_type == "INSERCION":
+            self.__save_as_insertion()
+        else:
+            self.tree.exportTree(self.filepath)
+            
+    def __save_as_insertion(self):
+
+        vuelos = []
+
+        for node in self.tree.copyBreadthFirstSearch():
+            f = node.getValue()
+            vuelos.append({
+                "codigo": f.codigo,
+                "origen": f.origen,
+                "destino": f.destino,
+                "horaSalida": f.horaSalida,
+                "precioBase": f.precioBase,
+                "pasajeros": f.pasajeros,
+                "promocion": f.promocion,
+                "alerta": f.alerta
+            })
+
+        data = {
+            "tipo": "INSERCION",
+            "vuelos": vuelos
+        }
+
+        with open(self.filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
 
     # CREATE
     def create_flight(self, flight):
@@ -118,3 +159,44 @@ class FlightService:
             return node.getValue()
         else:
             return None
+        
+    
+    def get_metrics(self):
+        metrics = {}
+
+        # Altura
+        metrics["altura"] = self.tree.heightTree()
+
+        # Total nodos
+        metrics["total_nodos"] = self.tree.treeWeight()
+
+        # Hojas
+        metrics["hojas"] = self.tree.countLeaves()
+
+        # Rotaciones
+        metrics["rotaciones"] = self.tree.rotations
+
+        # Cancelaciones masivas
+        metrics["cancelaciones_masivas"] = self.mass_cancellations
+
+        # Recorrido en anchura (BFS)
+        metrics["recorrido_anchura"] = [
+            node.getValue().codigo for node in self.tree.copyBreadthFirstSearch()
+        ]
+
+        # Recorrido en profundidad (DFS - PreOrder)
+        metrics["recorrido_profundidad"] = [
+            node.getValue().codigo for node in self.tree.preOrderTraversal()
+        ]
+
+        return metrics
+    
+    def export_metrics(self, filename="metrics.json"):
+        import json
+
+        metrics = self.get_metrics()
+
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4, ensure_ascii=False)
+
+        print("Métricas exportadas correctamente")

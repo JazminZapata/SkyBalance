@@ -6,6 +6,7 @@ class AVL(Tree):
     def __init__(self):
         super().__init__()
         self.rotations = {"LL": 0, "RR": 0, "LR": 0, "RL": 0}
+        self.auto_balance = True  #  Interruptor para balancear automaticamente
 
     # método de insertar para verificar si no hay raíz
     # cuando no hay raíz, se crea el nodo y se asigna como raiz
@@ -30,10 +31,11 @@ class AVL(Tree):
                     currentRoot.setRightChild(node)
                     # y el nuevo nodo tendrá como padre a la actual raiz
                     node.setParent(currentRoot)
-                    # verificar desbalanceo
-                    self.checkBalance(
-                        currentRoot
-                    )  # Aqui sucederia el balanceo automatico
+                    # verificar si se desbalancea segun el modo estres
+                    if self.auto_balance:
+                        self.checkBalance(
+                            currentRoot
+                        )  # Aqui sucederia el balanceo automatico
                 else:
                     # ya tiene hijo derecho, entonces se debe procesar la inserción desde el hijo derecho
                     # haciendo el llamado recursivo con ese hijo
@@ -46,8 +48,9 @@ class AVL(Tree):
                     currentRoot.setLeftChild(node)
                     # y al nuevo nodo se le asigna como padre a la actual raiz
                     node.setParent(currentRoot)
-                    # verificar desbalanceo
-                    self.checkBalance(currentRoot)
+                    # verificar desbalanceo segun el modo estres
+                    if self.auto_balance:
+                        self.checkBalance(currentRoot)
                 else:
                     # si tiene hijo izquierdo, entonces se llama recursivamente por el hijo izquierdo con el nodo a insertar.
                     self.__insert(currentRoot.getLeftChild(), node)
@@ -127,7 +130,7 @@ class AVL(Tree):
         topNode.setLeftChild(rightChildOfMiddleNode)
         if rightChildOfMiddleNode is not None:
             rightChildOfMiddleNode.setParent(topNode)
-        
+
         # After rotation, depths change: recalculate critical flags and prices
         self.recalculatePrices()
 
@@ -167,7 +170,7 @@ class AVL(Tree):
         topNode.setRightChild(leftChildOfMiddleNode)
         if leftChildOfMiddleNode is not None:
             leftChildOfMiddleNode.setParent(topNode)
-        
+
         # After rotation, depths change: recalculate critical flags and prices
         self.recalculatePrices()
 
@@ -201,16 +204,16 @@ class AVL(Tree):
         leftChildHeight = self.getHeightNode(node.getLeftChild())
         rightChildHeight = self.getHeightNode(node.getRightChild())
         return leftChildHeight - rightChildHeight
-      
-      
-    # deleteMinRentabilidad sí o sí debe estar en AVL porque es quien sabe rebalancear.  
-      
+
+    # deleteMinRentabilidad sí o sí debe estar en AVL porque es quien sabe rebalancear.
+
     # Necessary to recalculate prices in case the critical node, after removal
     def delete(self, value):
-      # Call parent delete logic
-      super().delete(value)
-      # After deletion, depths may change — recalculate critical flags and prices
-      self.recalculatePrices()
+        # Call parent delete logic
+        super().delete(value)
+        # After deletion, depths may change — recalculate critical flags and prices
+        self.recalculatePrices()
+
     # deleteMinProfit MUST be implemented in AVL because it knows how to rebalance.
     # Item 8.
 
@@ -237,6 +240,40 @@ class AVL(Tree):
             self.checkBalance(parentNode)
         elif self.root is not None:
             # Deleted node was root, rebalance from new root
-            self.checkBalance(self.root)    
-    
+            self.checkBalance(self.root)
+
     # End Item 8.
+
+    # No balancea automaticamente, hace parte de la prueba estres
+    def enable_stress_mode(self):
+        self.auto_balance = False
+
+    # Si se balancea automaticamente, hace parte de la prueba estres
+    def enable_auto_balance(self):
+        self.auto_balance = True
+        
+    def rebalance_all(self):
+        if self.root is None:
+            return
+
+        initial_rotations = self.rotations.copy()
+
+        changed = True
+
+        while changed:
+            changed = False
+            nodes = self.copyBreadthFirstSearch()
+
+            for node in nodes:
+                bf = self.getBalanceFactor(node)
+
+                if bf > 1 or bf < -1:
+                    self.checkBalance(node)
+                    changed = True
+
+        cost = {}
+
+        for key in self.rotations:
+            cost[key] = self.rotations[key] - initial_rotations[key]
+
+        return cost
