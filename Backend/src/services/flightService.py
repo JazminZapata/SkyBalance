@@ -32,7 +32,7 @@ class FlightService:
 
     # DELETE
     def delete_flight(self, codigo):
-        numero = Flight.extraerNumero(codigo)
+        numero = Flight.extractNum(codigo)
 
         node = self.tree.search(numero)
 
@@ -48,7 +48,7 @@ class FlightService:
 
     # UPDATE
     def update_flight(self, codigo, new_data):
-        numero = Flight.extraerNumero(codigo)
+        numero = Flight.extractNum(codigo)
 
         node = self.tree.search(numero)
 
@@ -82,7 +82,7 @@ class FlightService:
 
     # CANCEL (subárbol completo)
     def cancel_flight(self, codigo):
-        numero = Flight.extraerNumero(codigo)
+        numero = Flight.extractNum(codigo)
 
         node = self.tree.search(numero)
 
@@ -110,7 +110,7 @@ class FlightService:
 
     # FIND (Buscar vuelo por código)
     def find_flight(self, codigo):
-        numero = Flight.extraerNumero(codigo)
+        numero = Flight.extractNum(codigo)
 
         node = self.tree.search(numero)
 

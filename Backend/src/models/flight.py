@@ -21,7 +21,7 @@ class Flight:
         self.promocion = promocion
         self.alerta = alerta
         # Asignamos un atributo adicional que es el número del vuelo, que se extrae del código para facilitar la comparación entre vuelos (por ejemplo, para la inserción en el árbol)
-        self.codigo_comp = Flight.extraerNumero(codigo)
+        self.codigo_comp = Flight.extractNum(codigo)
 
     # Method to return the string representation of the flight, we will use the code as the identifier of the flight
 
@@ -35,14 +35,15 @@ class Flight:
 
     def getIngresoBase(self, precioFinal):
         return self.pasajeros * precioFinal
+
     
     #  función interna (estatica para poderla usar en flightService) para extraer el número del código del vuelo, asumiendo que el código tiene un formato como "FL1234" y queremos extraer el número 1234 para comparaciones numéricas
     @staticmethod
-    def extraerNumero(texto):
-        numeros = ''.join(filter(str.isdigit, texto)) # filtra los números y los junta en un string
+    def extractNum(text):
+        nums = ''.join(filter(str.isdigit, text)) # filtra los números y los junta en un string
 
-        if numeros:
-            return int(numeros)
+        if nums:
+            return int(nums)
 
-        return texto # por si no tiene números
+        return text
 
