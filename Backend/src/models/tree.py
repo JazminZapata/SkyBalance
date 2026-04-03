@@ -1,6 +1,5 @@
 import json
 
-
 class Tree:
     # constructor del árbol que se crea inicialmente con una raiz vacía
     def __init__(self):
@@ -41,6 +40,8 @@ class Tree:
             self.root = node
         else:
             self.__insert(self.root, node)
+
+   
 
     # Método que permita realizar la búsqueda de un nodo mediante su valor
     # debe seguir la lógica de las reglas de un BST
@@ -187,7 +188,7 @@ class Tree:
             self.__inOrderTraversal(self.root, result)
             return result
 
-    # Método recursivo para el recorrido Pre-Order
+    # Método recursivo para el recorrido In-Order
     def __inOrderTraversal(self, currentRoot, result):
         # se verifica si tiene hijo izquierdo para seguir el recorrido por él
         if currentRoot.getLeftChild() is not None:
@@ -212,7 +213,7 @@ class Tree:
             self.__posOrderTraversal(self.root, result)
             return result
 
-    # Método recursivo para el recorrido Pre-Order
+    # Método recursivo para el recorrido Pos-Order
     def __posOrderTraversal(self, currentRoot, result):
         # se verifica si tiene hijo izquierdo para seguir el recorrido por él
         if currentRoot.getLeftChild() is not None:
@@ -337,8 +338,8 @@ class Tree:
 
         node.getRightChild().setParent(node.getParent())
         node.setRightChild(None)
-        
-        # Le quitamos el padre al nodo a eliminar
+
+    # Le quitamos el padre al nodo a eliminar
         node.setParent(None)
     
 
@@ -410,7 +411,6 @@ class Tree:
         elif node.getLeftChild() is not None and node.getRightChild() is not None:
             nodeCase = 3
         return nodeCase
-
     def toJSON(self, node):
         if node is None:
             return None

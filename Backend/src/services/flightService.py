@@ -1,16 +1,16 @@
-from ..models.loader import loadTree
-from ..models.node import Node
-from ..models.flight import Flight
-from ..models.avl import AVL
-from ..models.actionHistory import ActionHistory
-from flask import json
+from models.loader import loadTree
+from models.node import Node
+from models.flight import Flight
+from models.avl import AVL
+from models.actionHistory import ActionHistory
+from models.bst import BST
 
 
 class FlightService:
 
     def __init__(self):
         self.tree = AVL()
-        self.bst = None
+        self.bst = BST()
         self.history = ActionHistory()
         self.mass_cancellations = 0
         self.load_type = None  # Para rastrear el tipo de carga (inserción o topología)

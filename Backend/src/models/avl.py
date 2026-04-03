@@ -1,4 +1,4 @@
-from tree import Tree
+from models.tree import Tree
 
 
 class AVL(Tree):
@@ -218,29 +218,28 @@ class AVL(Tree):
     # Item 8.
 
     def deleteMinProfit(self):
-        # Find the node with the lowest profitability
         node = self.findMinProfit()
 
         if node is None:
-            print("No hay nodos para eliminar")
+            print("There are no nodes to delete ")
             return
 
-        codigo = node.getValue().codigo_comp
-        print(f"Eliminando nodo: {node.getValue().codigo}")
-        print(f"Rentabilidad: {self.getProfit(node)}")
+        print(f"Deleted Node: {node.getValue().codigo}")
+        print(f"Profitability: {self.getProfit(node)}")
 
-        # Save the parent BEFORE deleting, to rebalance from there upward
-        parentNode = node.getParent()
+        parent = node.getParent()
 
-        # Delete using the BST logic inherited from Tree
-        self.delete(codigo)
+        # eliminar
+        self.delete(node.getValue().codigo_comp)
 
-        # Rebalance upward from where the node was removed
-        if parentNode is not None:
-            self.checkBalance(parentNode)
-        elif self.root is not None:
-            # Deleted node was root, rebalance from new root
+        while parent is not None:
+            self.checkBalance(parent)
+            parent = parent.getParent()
+
+        if self.root is not None:
             self.checkBalance(self.root)
+
+        self.recalculatePrices()
 
     # End Item 8.
 
@@ -251,29 +250,48 @@ class AVL(Tree):
     # Si se balancea automaticamente, hace parte de la prueba estres
     def enable_auto_balance(self):
         self.auto_balance = True
-        
+
     def rebalance_all(self):
         if self.root is None:
-            return
+            return {}
 
         initial_rotations = self.rotations.copy()
 
-        changed = True
+        # 1. Obtener nodos en orden (BST ordenado)
+        nodes = self.inOrderTraversal()
 
-        while changed:
-            changed = False
-            nodes = self.copyBreadthFirstSearch()
+        # 2. Reconstruir árbol balanceado
+        self.root = self.__build_balanced(nodes, 0, len(nodes) - 1)
 
-            for node in nodes:
-                bf = self.getBalanceFactor(node)
+        # 3. Recalcular precios
+        self.recalculatePrices()
 
-                if bf > 1 or bf < -1:
-                    self.checkBalance(node)
-                    changed = True
-
+        # 4. Calcular costo (simulado)
         cost = {}
-
         for key in self.rotations:
             cost[key] = self.rotations[key] - initial_rotations[key]
 
         return cost
+    
+    def __build_balanced(self, nodes, start, end):
+        if start > end:
+            return None
+
+        mid = (start + end) // 2
+        root = nodes[mid]
+
+        # Construir hijos
+        left = self.__build_balanced(nodes, start, mid - 1)
+        right = self.__build_balanced(nodes, mid + 1, end)
+
+        root.setLeftChild(left)
+        root.setRightChild(right)
+
+        if left:
+            left.setParent(root)
+        if right:
+            right.setParent(root)
+
+        root.setParent(None)
+
+        return root
