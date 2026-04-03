@@ -201,16 +201,15 @@ class AVL(Tree):
         leftChildHeight = self.getHeightNode(node.getLeftChild())
         rightChildHeight = self.getHeightNode(node.getRightChild())
         return leftChildHeight - rightChildHeight
-      
-      
+
     # deleteMinRentabilidad sí o sí debe estar en AVL porque es quien sabe rebalancear.  
-      
+
     # Necessary to recalculate prices in case the critical node, after removal
     def delete(self, value):
-      # Call parent delete logic
-      super().delete(value)
-      # After deletion, depths may change — recalculate critical flags and prices
-      self.recalculatePrices()
+        # Call parent delete logic
+        super().delete(value)
+        # After deletion, depths may change — recalculate critical flags and prices
+        self.recalculatePrices()
     # deleteMinProfit MUST be implemented in AVL because it knows how to rebalance.
     # Item 8.
 
