@@ -304,7 +304,8 @@ with col1:
                 
                 avl.deleteMinProfit()
                 
-                # Guardar en session_state antes del rerun
+                # Forzar que Streamlit reconozca el cambio
+                st.session_state.avl = avl  # ← esto es lo que faltaba
                 st.session_state.last_deleted = {
                     "code": code,
                     "profitability": profitability
@@ -312,6 +313,21 @@ with col1:
                 st.rerun()
         except Exception as e:
             st.error(f"Error: {e}")
+    
+    if st.button("🔍 Debug Balance"):
+     if avl.root:
+        nodes = avl.copyBreadthFirstSearch()
+        debug_info = []
+        for n in nodes:
+            bf = avl.getBalanceFactor(n)
+            depth = avl.getDepth(n)
+            debug_info.append({
+                "codigo": n.getValue().codigo,
+                "bf": bf,
+                "depth": depth,
+                "parent": n.getParent().getValue().codigo if n.getParent() else "ROOT"
+            })
+        st.json(debug_info)
 
 # ===============================
 # CENTER

@@ -1,4 +1,5 @@
 from models.tree import Tree
+from models.node import Node
 
 class AVL(Tree):
 
@@ -30,9 +31,7 @@ class AVL(Tree):
                     # y el nuevo nodo tendrá como padre a la actual raiz
                     node.setParent(currentRoot)
                     # verificar desbalanceo
-                    self.checkBalance(
-                        currentRoot
-                    )  # Aqui sucederia el balanceo automatico
+                    self.checkBalance(currentRoot)  # Aqui sucederia el balanceo automatico
                 else:
                     # ya tiene hijo derecho, entonces se debe procesar la inserción desde el hijo derecho
                     # haciendo el llamado recursivo con ese hijo
@@ -63,9 +62,11 @@ class AVL(Tree):
     # Método recursivo para validar el balanceo de un árbol
     def __checkBalance(self, node):
         bf = self.getBalanceFactor(node)
+        print(f"checkBalance en {node.getValue().codigo} bf={bf}")
         if bf > 1 or bf < -1:
             # se identifica el caso de desbalanceo (LL, RR, RL, LR)
             bfCase = self.getBalanceCase(node, bf)
+            print(f"  → caso: {bfCase}")
             match bfCase:
                 case "LL":
                     self.rotations["LL"] += 1
@@ -77,13 +78,13 @@ class AVL(Tree):
 
                 case "LR":
                     self.rotations["LR"] += 1
-                    self.__rotateRight(node.getLeftChild())
-                    self.__rotateLeft(node)
+                    self.__rotateLeft(node.getLeftChild())
+                    self.__rotateRight(node)
 
                 case "RL":
                     self.rotations["RL"] += 1
-                    self.__rotateLeft(node.getRightChild())
-                    self.__rotateRight(node)
+                    self.__rotateRight(node.getRightChild())
+                    self.__rotateLeft(node)
 
         else:
             # se verifica que el nodo actual no sea la raiz, y se invoca el chequeo de balanceo con su padre.
@@ -176,8 +177,9 @@ class AVL(Tree):
         # caso negativo, va por R
         if bf < -1:
             bfChild = self.getBalanceFactor(node.getRightChild())
+            print(f"  → bfChild en caso R: {bfChild}")
             # caso negativo, va por R
-            if bfChild < 0:
+            if bfChild <= 0:
                 bfCase = "RR"
             else:
                 # caso positivo va por L
@@ -186,7 +188,7 @@ class AVL(Tree):
         else:
             bfChild = self.getBalanceFactor(node.getLeftChild())
             # caso positivo, va por L
-            if bfChild > 0:
+            if bfChild >= 0:
                 bfCase = "LL"
             else:
                 # caso negativo va por R
@@ -214,24 +216,17 @@ class AVL(Tree):
       node = self.findMinProfit()
 
       if node is None:
-        print("There are no nodes to delete ")
         return
 
-      print(f"Deleted Node: {node.getValue().codigo}")
-      print(f"Profitability: {self.getProfit(node)}")
-
       parent = node.getParent()
+      print(f"Nodo a eliminar: {node.getValue().codigo}")
+      print(f"Padre guardado: {parent.getValue().codigo if parent else 'None'}")
 
-    # eliminar
       self.delete(node.getValue().codigo_comp)
- 
-      while parent is not None:
-        self.checkBalance(parent)
-        parent = parent.getParent()
 
-      if self.root is not None:
-        self.checkBalance(self.root)
+      print(f"BF del padre después de delete: {self.getBalanceFactor(parent)}")
+      print(f"Padre sigue en árbol: {self.search(parent.getValue().codigo_comp) is not None}")
 
+      self.checkBalance(parent)
       self.recalculatePrices()
-    
     # End Item 8.
