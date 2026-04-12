@@ -7,65 +7,66 @@ class AVL(Tree):
     def __init__(self):
         super().__init__()
         self.rotations = {"LL": 0, "RR": 0, "LR": 0, "RL": 0}
-        self.auto_balance = True  #  Interruptor para balancear automaticamente
+        self.auto_balance = True  #  Interruptor to enable/disable automatic balancing, used for stress testing
 
-    # método de insertar para verificar si no hay raíz
-    # cuando no hay raíz, se crea el nodo y se asigna como raiz
-    # cuando si hay raiz se procede a insertar llamando a la función privada con la raiz del árbol y el nodo a insertar
+    # Method to insert a node when there's no root 
+    # When there's no root, we simply assign the new node as the root of the tree
+    # When there is a root, we call the recursive method __insert to find the correct position for the new node and insert it there
     def insert(self, node):
-        # verificar si no hay raiz para asignar el nuevo como raiz
+        # Check if the tree is empty (no root)
         if self.root is None:
             self.root = node
         else:
             self.__insert(self.root, node)
 
-    # Método recursivo para insertar un nodo cuando se tiene raiz en el árbol
+    # Recursive method to find the correct position for the new node and insert it there
     def __insert(self, currentRoot, node):
         if node.getValue().getCodigoComp() == currentRoot.getValue().getCodigoComp():
             print(f"El valor del nodo {node.getValue().getCodigo} ya existe en el árbol.")
         else:
-            # se verifica si el valor a insertar es mayor que el actual raiz
+            # We compare the value of the node to be inserted with the value of the current root to determine if it should go to the left or right subtree
             if node.getValue().getCodigoComp() > currentRoot.getValue().getCodigoComp():
-                # se verifica si existe un hijo derecho
+                # Check if it has a right child
                 if currentRoot.getRightChild() is None:
-                    # si no tiene hijo derecho, se asigna el nodo como hijo derecho
+                    # If it doesn't have a right child, we assign the node as the right child of the current root
                     currentRoot.setRightChild(node)
-                    # y el nuevo nodo tendrá como padre a la actual raiz
+                    # and the new node is assigned the current root as its parent
                     node.setParent(currentRoot)
-                    # verificar si se desbalancea segun el modo estres
+                    # check for imbalance according to the stress mode
                     if self.auto_balance:
                         self.checkBalance(
                             currentRoot
-                        )  # Aqui sucederia el balanceo automatico
+                        )  # Here automatic balancing is triggered after insertion 
                 else:
-                    # ya tiene hijo derecho, entonces se debe procesar la inserción desde el hijo derecho
-                    # haciendo el llamado recursivo con ese hijo
+                    # if it has a right child, then we call recursively on the right child with the node to be inserted,
+                    # then we call recursively on the right child with the node to be inserted.
                     self.__insert(currentRoot.getRightChild(), node)
             else:
-                # el valor del nodo a insertar es menor que el valor de la actual raiz
-                # se verifica si tiene hijo izquierdo
+                # Node's code is less than current root's code, so it should go to the left subtree
+                # Check if it has a left child
                 if currentRoot.getLeftChild() is None:
-                    # si no tiene se asigna el nodo como hijo izquierdo
+                    # If it doesn't have a left child, we assign the node as the left child of the current root
                     currentRoot.setLeftChild(node)
-                    # y al nuevo nodo se le asigna como padre a la actual raiz
+                    # and the new node is assigned the current root as its parent
                     node.setParent(currentRoot)
-                    # verificar desbalanceo segun el modo estres
+                    # check for imbalance according to the stress mode
                     if self.auto_balance:
                         self.checkBalance(currentRoot)
                 else:
-                    # si tiene hijo izquierdo, entonces se llama recursivamente por el hijo izquierdo con el nodo a insertar.
+                    # if it has a left child, then we call recursively on the left child with the node to be inserted.
                     self.__insert(currentRoot.getLeftChild(), node)
 
-    # INICIO DE MÉTODOS DEL BALANCEO DEL ÁRBOL AVL
+
+    # AVL TREE BALACING METHODS
     # -----------------------------------------------------------
 
-    # Método para chequear el balanceo de un árbol a partir de un nodo
+    # Method to check the balance of a node and perform the necessary rotations if it is unbalanced
     def checkBalance(self, node):
         if node is None:
             return
         self.__checkBalance(node)
 
-    # Método recursivo para validar el balanceo de un árbol
+    # Recursive method to validate the balancing of a tree
     def __checkBalance(self, node):
         bf = self.getBalanceFactor(node)
         print(f"checkBalance en {node.getValue().getCodigo} bf={bf}")
@@ -93,26 +94,26 @@ class AVL(Tree):
             if node != self.root:
                 self.__checkBalance(node.getParent())
 
-    # método para el giro simple a la derecha
+    # Method for performing a simple right rotation
     def __rotateRight(self, topNode):
-        # se obtiene el nodo de la mitad
+        # we get middle node
         middleNode = topNode.getLeftChild()
 
         if middleNode is None:
             return
 
-        # se obtiene el padre del nodo superior, cuando es la raiz será None
+        # we get the parent of the top node, when it's the root it will be None
         parentTopNode = topNode.getParent()
 
         # se obtiene el hijo derecho del nodo de la mitad
         rightChildOfMiddleNode = middleNode.getRightChild()
 
-        # se mueve el superior como hijo derecho del nodo de la mitad
+        # we move the top node as the right child of the middle node
         middleNode.setRightChild(topNode)
         topNode.setParent(middleNode)
 
-        # reacomodar al nodo padre del superior apuntando al de la mitad
-        # verificar si el superior era la raiz
+        # reaccomodate the parent of the top node pointing to the middle node
+        # check if the top node was the root
         if parentTopNode is None:
             self.root = middleNode
             middleNode.setParent(None)
@@ -121,9 +122,9 @@ class AVL(Tree):
                 parentTopNode.setLeftChild(middleNode)
             else:
                 parentTopNode.setRightChild(middleNode)
-            # sin importar si era hijo izq o derecho, se asigna ese padre del superior como padre del nodo de la mitad
+            # without caring if it was a left or right child, we assign that parent of the top node as the parent of the middle node
             middleNode.setParent(parentTopNode)
-        # reasignar el hijo derecho del nodo de la mitad al nodo superior que ya bajó como hijo derecho del nodo de la mitad
+        # reassign the right child of the middle node to the top node that has already moved down as the right child of the middle node
         topNode.setLeftChild(rightChildOfMiddleNode)
         if rightChildOfMiddleNode is not None:
             rightChildOfMiddleNode.setParent(topNode)
@@ -131,27 +132,27 @@ class AVL(Tree):
         # After rotation, depths change: recalculate critical flags and prices
         self.recalculatePrices()
 
-        # método para el giro simple a la izquierda
+        # method for performing a simple left rotation
 
     def __rotateLeft(self, topNode):
-        # se obtiene el nodo de la mitad
+        # we get middle node
         middleNode = topNode.getRightChild()
 
         if middleNode is None:
             return
 
-        # se obtiene el padre del nodo superior, cuando es la raiz será None
+        # we get the parent of the top node, when it's the root it will be None
         parentTopNode = topNode.getParent()
 
-        # se obtiene el hijo izquierdo del nodo de la mitad
+        # we get the left child of the middle node
         leftChildOfMiddleNode = middleNode.getLeftChild()
 
-        # se mueve el superior como hijo izquierdo del nodo de la mitad
+        # we move the top node as the left child of the middle node
         middleNode.setLeftChild(topNode)
         topNode.setParent(middleNode)
 
-        # reacomodar al nodo padre del superior apuntando al de la mitad
-        # verificar si el superior era la raiz
+        # reaccomodate the parent of the top node pointing to the middle node
+        # check if the top node was the root
         if parentTopNode is None:
             self.root = middleNode
             middleNode.setParent(None)
@@ -160,10 +161,10 @@ class AVL(Tree):
                 parentTopNode.setLeftChild(middleNode)
             else:
                 parentTopNode.setRightChild(middleNode)
-            # sin importar si era hijo izq o derecho, se asigna ese padre del superior como padre del nodo de la mitad
+            # without caring if it was a left or right child, we assign that parent of the top node as the parent of the middle node
             middleNode.setParent(parentTopNode)
 
-        # reasignar el hijo izquierdo del nodo de la mitad al nodo superior que ya bajó como hijo izquierdo del nodo de la mitad
+        # reassign the left child of the middle node to the top node that has already moved down as the left child of the middle node
         topNode.setRightChild(leftChildOfMiddleNode)
         if leftChildOfMiddleNode is not None:
             leftChildOfMiddleNode.setParent(topNode)
@@ -171,27 +172,27 @@ class AVL(Tree):
         # After rotation, depths change: recalculate critical flags and prices
         self.recalculatePrices()
 
-    # método para identificar el caso de desbalanceo
+    # method for identifying the balancing case
     def getBalanceCase(self, node, bf):
         bfCase = ""
         if bf < -1:
             bfChild = self.getBalanceFactor(node.getRightChild())
             print(f"  → bfChild en caso R: {bfChild}")
-            # caso negativo, va por R
+            # case negative, goes by R
             if bfChild <= 0:
                 bfCase = "RR"
             else:
                 bfCase = "RL"
         else:
             bfChild = self.getBalanceFactor(node.getLeftChild())
-            # caso positivo, va por L
+            # case positive, goes by L
             if bfChild >= 0:
                 bfCase = "LL"
             else:
                 bfCase = "LR"
         return bfCase
 
-    # Método para calcular el BF de un nodo
+    # Method for calculating the BF of a node
     def getBalanceFactor(self, node):
         if node is None:
             return 0
@@ -216,11 +217,11 @@ class AVL(Tree):
         self.recalculatePrices()
 
 
-    # No balancea automaticamente, hace parte de la prueba estres
+    # it doesn't balance automatically, it just rebuilds the tree in a balanced way, used for stress testing
     def enable_stress_mode(self):
         self.auto_balance = False
 
-    # Si se balancea automaticamente, hace parte de la prueba estres
+    # If it balances automatically, it's part of the stress test
     def enable_auto_balance(self):
         self.auto_balance = True
 
@@ -230,16 +231,16 @@ class AVL(Tree):
 
         initial_rotations = self.rotations.copy()
 
-        # 1. Obtener nodos en orden (BST ordenado)
+        # 1. Get nodes in order (BST ordered)
         nodes = self.inOrderTraversal()
 
-        # 2. Reconstruir árbol balanceado
+        # 2. Rebuild balanced tree
         self.root = self.__build_balanced(nodes, 0, len(nodes) - 1)
 
-        # 3. Recalcular precios
+        # 3. Recalculate prices
         self.recalculatePrices()
 
-        # 4. Calcular costo (simulado)
+        # 4. Calculate cost (simulated)
         cost = {}
         for key in self.rotations:
             cost[key] = self.rotations[key] - initial_rotations[key]
@@ -253,7 +254,7 @@ class AVL(Tree):
         mid = (start + end) // 2
         root = nodes[mid]
 
-        # Construir hijos
+        # Build children
         left = self.__build_balanced(nodes, start, mid - 1)
         right = self.__build_balanced(nodes, mid + 1, end)
 

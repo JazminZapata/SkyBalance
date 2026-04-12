@@ -1,7 +1,7 @@
 # clase que permite instanciar nuevos nodos con sus atributo
 class Node:
 
-    # constructor para el nodo con hijos, padre y valor
+    # Constructor of the Node class, which initializes the node with a flight object and sets the left and right children to None
     # We define the attributes (balaceFactor, finalPrice and height as specific attributes of the node)
 
     def __init__(self, flight):
@@ -14,31 +14,25 @@ class Node:
         self.finalPrice = None
         self.isCritical = False  # NodoCritico
 
-    # asignación de un hijo derecho
+    # Getters and setters for the node's attributes
     def setRightChild(self, node):
         self.rightChild = node
 
-    # obtener el hijo derecho
     def getRightChild(self):
         return self.rightChild
 
-    # asignar un hijo izquierdo
     def setLeftChild(self, node):
         self.leftChild = node
 
-    # obtener el hijo izquierdo
     def getLeftChild(self):
         return self.leftChild
 
-    # asignar un padre
     def setParent(self, node):
         self.parent = node
 
-    # obtener el nodo padre
     def getParent(self):
         return self.parent
 
-    # obtener el valor del nodo
     def getValue(self):
         return self.value
 

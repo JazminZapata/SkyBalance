@@ -833,7 +833,7 @@ with col3:
         if st.button("Pending Insertions", use_container_width=True, key="open_queue_dialog"):
             queue_dialog()
 
-    if st.button("Queue Flight", use_container_width=True):
+    if st.button("Add Flight to Queue", use_container_width=True):
         queue_modal()
             
     # End Item 3 Button
