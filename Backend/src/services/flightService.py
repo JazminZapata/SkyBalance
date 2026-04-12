@@ -27,7 +27,7 @@ class FlightService:
         self.load_type = data.get("tipo")
         loadTree(self.tree, self.bst, filepath)
 
-    # SAVE JSON
+    # Save json
     def save_to_json(self):
         if self.load_type == "INSERCION":
             self.__save_as_insertion()
