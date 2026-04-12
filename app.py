@@ -587,49 +587,6 @@ with col1:
         
     st.divider()
     
-# Item 2 — Version management
-    st.markdown("### Versions")
-
-    # Input field where the user types the name for the new version
-    version_name = st.text_input("Version name", key="version_name")
-    if st.button("Save Version", use_container_width=True):
-        # Validate that the name is not empty
-        if not version_name.strip():
-            st.warning("Enter a version name")
-        # Validate that the tree has at least one node before saving
-        elif avl.root is None:
-            st.warning("Tree is empty")
-        else:
-            # Save the current tree state under the given name
-            service.save_version(version_name.strip())
-            st.success(f"Version '{version_name}' saved")
-
-    # Load the list of saved versions from disk
-    versions = service.list_versions()
-    if versions:
-        # Support both plain string lists and lists of dicts with a "name" key
-        version_options = [v["name"] for v in versions] if isinstance(versions[0], dict) else versions
-        # Dropdown so the user can pick which version to restore or delete
-        selected = st.selectbox("Saved versions", version_options, key="version_select")
-
-        col_r, col_d = st.columns(2)
-        with col_r:
-            # Restore rebuilds the tree from the saved JSON snapshot
-            if st.button("Restore", use_container_width=True):
-                service.restore_version(selected)
-                st.success(f"Restored '{selected}'")
-                st.rerun()
-        with col_d:
-            # Delete removes the version from memory and from disk
-            if st.button("Delete", use_container_width=True):
-                service.delete_version(selected)
-                st.success(f"Deleted '{selected}'")
-                st.rerun()
-    else:
-        # Shown when no versions have been saved yet
-        st.caption("No saved versions yet")
-    # End Item 2
-
     # --- Depth Control ---
     st.markdown("### Depth Control")
     depth = st.number_input("Max Depth", value=avl.limite)
@@ -703,6 +660,7 @@ with col2:
         st.markdown("### BST")
         st.pyplot(fig_bst)
         plt.close(fig_bst)
+        
 
 # ===============================
 # METRICS (from avl, tree and flightService)
@@ -837,3 +795,47 @@ with col3:
         queue_modal()
             
     # End Item 3 Button
+    
+    
+    # Item 2 — Version management
+    st.markdown("### Versions")
+
+    # Input field where the user types the name for the new version
+    version_name = st.text_input("Version name", key="version_name")
+    if st.button("Save Version", use_container_width=True):
+        # Validate that the name is not empty
+        if not version_name.strip():
+            st.warning("Enter a version name")
+        # Validate that the tree has at least one node before saving
+        elif avl.root is None:
+            st.warning("Tree is empty")
+        else:
+            # Save the current tree state under the given name
+            service.save_version(version_name.strip())
+            st.success(f"Version '{version_name}' saved")
+
+    # Load the list of saved versions from disk
+    versions = service.list_versions()
+    if versions:
+        # Support both plain string lists and lists of dicts with a "name" key
+        version_options = [v["name"] for v in versions] if isinstance(versions[0], dict) else versions
+        # Dropdown so the user can pick which version to restore or delete
+        selected = st.selectbox("Saved versions", version_options, key="version_select")
+
+        col_r, col_d = st.columns(2)
+        with col_r:
+            # Restore rebuilds the tree from the saved JSON snapshot
+            if st.button("Restore", use_container_width=True):
+                service.restore_version(selected)
+                st.success(f"Restored '{selected}'")
+                st.rerun()
+        with col_d:
+            # Delete removes the version from memory and from disk
+            if st.button("Delete", use_container_width=True):
+                service.delete_version(selected)
+                st.success(f"Deleted '{selected}'")
+                st.rerun()
+    else:
+        # Shown when no versions have been saved yet
+        st.caption("No saved versions yet")
+    # End Item 2

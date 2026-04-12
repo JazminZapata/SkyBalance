@@ -67,11 +67,6 @@ class Flight:
     def setAlerta(self, value): 
         self._alerta = value
 
-    # Priority was added as an extra attribute in the tree serialization
-    # to support operational decisions without affecting the AVL structure
-    def getPriority(self):
-        return None
-
     def getIngresoBase(self, precioFinal):
         return self._pasajeros * precioFinal
 
