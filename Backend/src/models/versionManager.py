@@ -40,7 +40,6 @@ class VersionManager:
             print(f"Version '{name}' not found.")
             return
 
-
         entry = self.versions[name]
 
         # Rebuild the AVL tree from the saved JSON
@@ -51,11 +50,14 @@ class VersionManager:
         tree.recalculatePrices()
 
         # Rebuild the BST only if it was saved and a bst object was provided
-        if bst and entry.get("bst_copy"):
-            bst.root = buildByTopology(entry["bst_copy"])
+        if bst:
+            if entry.get("bst_copy"):
+                bst.root = buildByTopology(entry["bst_copy"])
+            else:
+                bst.root = None  # Clear BST if version had none (topology mode)
 
         print(f"Version '{name}' restored.")
-
+    
     def list_versions(self):
         # Returns the names of all saved versions as a list
         return list(self.versions.keys())

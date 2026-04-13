@@ -159,6 +159,10 @@ class FlightService:
     # Restores the tree to a previously saved named version
     def restore_version(self, name: str):
         self.versions.restore(name, self.tree, self.bst)
+        
+        # If the restored version doesn't have a BST, we need to create an empty one to avoid errors in other methods that expect a BST to exist
+        if not self.bst.root:
+            self.bst = BST() 
 
     # Returns all saved versions with their name, timestamp and depth limit
     def list_versions(self) -> list:

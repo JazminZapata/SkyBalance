@@ -25,7 +25,6 @@ class Tree:
         for node in self.copyBreadthFirstSearch():
             is_critical = self.isCritical(node)
             node.setIsCritical(is_critical)
-            # Set alert flag based on critical status
             node.getValue().setAlerta(is_critical)
             price = node.getValue().getPrecioBase()
             # Apply 25% surcharge if node exceeds depth limit
@@ -34,7 +33,7 @@ class Tree:
             # Apply 10% discount if flight has a promotion
             if node.getValue().getPromocion():
                 price = price * 0.90
-            node.setFinalPrice(price)
+            node.setFinalPrice(price)  
     # Final Item 6.
     
     # Method to get the root of the tree
@@ -418,20 +417,20 @@ class Tree:
         flight = node.getValue()
 
         return {
-            "code": flight.getCodigo(),
-            "origin": flight.getOrigen(),
-            "destination": flight.getDestino(),
-            "departureTime": flight.getHoraSalida(),
-            "basePrice": flight.getPrecioBase(),
-            "finalPrice": node.getFinalPrice(self),  # Calculate final price based on current critical status
-            "passengers": flight.getPasajeros(),
-            "promotion": flight.getPromocion(),
-            "alert": node.getIsCritical(),  # True if node exceeds the depth limit
-            "height": self.getHeightNode(node),
-            "balanceFactor": self.getBalanceFactor(node),
-            "profit": self.getProfit(node),
-            "left": self.toJSON(node.getLeftChild()),
-            "right": self.toJSON(node.getRightChild())
+            "codigo": flight.getCodigo(),
+            "origen": flight.getOrigen(),
+            "destino": flight.getDestino(),
+            "horaSalida": flight.getHoraSalida(),
+            "precioBase": flight.getPrecioBase(),
+            "precioFinal": node.getFinalPrice(self),  # Calculate final price based on current critical status
+            "pasajeros": flight.getPasajeros(),
+            "promocion": flight.getPromocion(),
+            "alerta": node.getIsCritical(),  # True if node exceeds the depth limit
+            "altura": self.getHeightNode(node),
+            "factorEquilibrio": self.getBalanceFactor(node),
+            "profitabilidad": self.getProfit(node),
+            "izquierdo": self.toJSON(node.getLeftChild()),
+            "derecho": self.toJSON(node.getRightChild())
         }
 
     def exportTree(self, filename="tree.json"):
